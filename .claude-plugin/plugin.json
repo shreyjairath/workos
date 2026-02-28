@@ -1,0 +1,19 @@
+{
+  "name": "cowork",
+  "description": "Persistent memory system for Claude Code. Two memory layers — environment and project — that accumulate knowledge across sessions.",
+  "version": "3.0.0",
+  "skills": [
+    {
+      "name": "cowork",
+      "path": "skills/cowork/SKILL.md",
+      "description": "Operating model — how the assistant loads, uses, and updates memory while working.",
+      "autoLoad": true
+    },
+    {
+      "name": "state",
+      "path": "skills/state/SKILL.md",
+      "description": "Memory system — file formats, initialization templates, and update rules for environment.md and project memory.md.",
+      "autoLoad": true
+    }
+  ]
+}
