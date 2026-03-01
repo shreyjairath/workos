@@ -1,4 +1,10 @@
-# Cowork — Operating Model
+---
+name: workos-os
+description: Set up the WorkOS operating model to work on projects in the user's environment.
+user-invokable: true
+---
+
+# WorkOS — Operating Model
 
 ## Concepts
 
@@ -6,13 +12,20 @@
 
 **Projects** — Initiatives carried out in the environment. Each project has an objective, evolving context, and its own data. A project might involve multiple repos, span many tasks, or be a single focused effort.
 
-You have persistent memory for each. Environment memory captures your understanding of the environment. Project memory captures your understanding of a specific initiative. See the `state` skill for file formats, templates, and storage layout.
+You have persistent memory for each. Environment memory captures your understanding of the environment. Project memory captures your understanding of a specific initiative. See the `workos-memory` skill for file formats, templates, and storage layout.
 
-## Boot
+## On Boot
 
-1. Read `.cowork/environment/memory.md` if it exists — this is your understanding of the environment.
-2. If the user names a project, read `.cowork/projects/<project>/memory.md` — this is where you left off.
-3. If `.cowork/` doesn't exist, bootstrap it (see the `state` skill).
+Context is automatically injected by the SessionStart hook. You will see environment config, environment memory, and project summaries at the start of every session. No manual loading needed.
+
+If the hook tells you WorkOS is not set up, create the directory structure and config (see `workos-memory` skill for bootstrapping steps), then explore repos to populate environment memory (see `workos-bootstrap` skill).
+
+## Using config
+
+When config exists, use it to work smarter:
+- **Repos**: Know what codebases exist, where they're cloned, and which to explore first. Don't ask the user to name repos if they're already declared.
+- **Team**: Include team context when seeding environment memory.
+- **Bootstrap plugins**: When exploring repos for environment discovery, invoke the declared plugins (e.g., `map-infrastructure`, `library-specs`) instead of relying only on raw file exploration.
 
 ## While working
 
@@ -54,8 +67,8 @@ Working on projects trains you to operate better in the environment. Knowledge a
 
 ## Managing projects
 
-- To start a new project: create `.cowork/projects/<name>/memory.md` from the template.
+- To start a new project: create `.workos/projects/<name>/memory.md` from the template.
 - To resume a project: read the existing `memory.md`.
-- To check what projects exist: list `.cowork/projects/`.
+- To check what projects exist: list `.workos/projects/`.
 
-Each project directory holds all data for that project: `data/` for persistent files (committed), `repos/` for cloned repositories (gitignored), `scratch/` for transient files (gitignored). Only `memory.md` is managed by cowork.
+Each project directory holds all data for that project: `data/` for persistent files (committed), `repos/` for cloned repositories (gitignored), `scratch/` for transient files (gitignored). Only `memory.md` is managed by workos.

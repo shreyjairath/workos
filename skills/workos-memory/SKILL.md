@@ -1,41 +1,59 @@
-# Cowork — Memory System
+---
+name: workos-memory
+description: File formats, templates, and update rules for persistent environment and project memory.
+user-invokable: true
+---
+
+# WorkOS — Memory System
 
 Rules and templates for the persistent memory files.
 
 ## Storage layout
 
 ```
-.cowork/
-├── environment/
+.workos/
+├── config.yaml              # Workspace configuration (repos, team, bootstrap plugins)
+├── environment/             # Environment-level memory
 │   └── memory.md
 └── projects/
     └── <project-name>/
-        ├── memory.md
+        ├── memory.md        # Project-level memory
+        ├── plan.md          # Project plan (tracks, tasks, status)
         ├── data/            # Persistent project data (configs, reference docs)
         ├── repos/           # Cloned repositories (gitignored)
         └── scratch/         # Transient working files (gitignored)
 ```
 
+`config.yaml` declares the environment upfront — repos, team context, and tools for discovery. See the `workos-config` skill for the full schema.
+
 Environment and projects each have a `memory.md`. Project data goes in `data/` (committed), cloned repos in `repos/` (gitignored), transient files in `scratch/` (gitignored).
 
 ## Bootstrapping
 
-When `.cowork/` doesn't exist, create it with the environment directory:
+When `.workos/` doesn't exist, create the full structure:
 
-```
-mkdir -p .cowork/environment .cowork/projects
-printf 'repos/\nscratch/\n' > .cowork/.gitignore
-```
+1. Create directories: `mkdir -p .workos/environment .workos/projects`
+2. Create gitignore: `printf 'repos/\nscratch/\n' > .workos/.gitignore`
+3. Ask the user about their repos, team, and preferred tools
+4. Create `.workos/config.yaml` from their answers (see `workos-config` skill for schema)
+5. Create `environment/memory.md` from the template below
+6. Add `workos.md` to workspace root with an overview of the operating model
+7. Offer to explore repos and populate environment memory (see `workos-bootstrap` skill)
 
-Then create `environment/memory.md` from the template below.
+### Starting a new project
 
-When starting a new project, create its directory and `memory.md`:
+When the user wants to start a project (e.g., "start a project for X", "let's work on X"):
 
-```
-mkdir -p .cowork/projects/<project-name>/{data,repos,scratch}
-```
+1. Derive the project name — lowercase, hyphenated (e.g., `api-redesign`, `fix-auth-bug`). Confirm with the user if ambiguous.
+2. Create the directory structure:
+   ```
+   mkdir -p .workos/projects/<project-name>/{data,repos,scratch}
+   ```
+3. Create `memory.md` from the template below. **Fill in the Objective** from the user's request — don't leave it as a comment placeholder.
+4. Create an empty `plan.md` (plans get written when non-trivial work begins).
+5. Tell the user what was created and confirm the objective is right.
 
-Then create `memory.md` from the template below.
+Don't skip steps or leave the directory partially created.
 
 ## File formats
 
@@ -111,6 +129,14 @@ Memory files should be quick to read. A good `memory.md` is typically 20-80 line
 
 If a section is getting long, that's a signal to distill rather than to keep adding.
 
+### Size guardrails
+
+After rewriting any memory file, check its length:
+- **Environment memory > 200 lines**: Warn the user and suggest condensing. Look for sections that can be distilled, details that belong in project memory instead, or content that duplicates what's in code/docs.
+- **Project memory > 80 lines**: Warn the user and suggest condensing. Move detailed findings to `data/` files and reference them from memory. Keep memory scannable.
+
+Don't silently truncate — tell the user what's too long and why it should be shortened.
+
 ### Project data
 
 Each project has three directories for non-memory content:
@@ -120,8 +146,9 @@ Each project has three directories for non-memory content:
 - **`scratch/`** — Transient working files. Build outputs, temp files, exploratory scripts. Gitignored.
 
 ```
-.cowork/projects/api-redesign/
+.workos/projects/api-redesign/
 ├── memory.md
+├── plan.md
 ├── data/
 │   └── design.pdf           # A reference doc
 ├── repos/
@@ -134,7 +161,7 @@ The `memory.md` Context section should reference important data so the assistant
 
 ### Project names
 
-Use lowercase, hyphenated names: `api-redesign`, `auth-migration`, `perf-fixes`. The project name becomes the directory name under `.cowork/projects/`.
+Use lowercase, hyphenated names: `api-redesign`, `auth-migration`, `perf-fixes`. The project name becomes the directory name under `.workos/projects/`.
 
 ### Initialization
 
