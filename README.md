@@ -1,6 +1,6 @@
 # WorkOS
 
-An operating system for working with Claude Code. Two layers of persistent memory — environment and project — that make the assistant progressively better at operating in your world.
+An operating system for working with Claude Code. Persistent memory that makes Claude progressively better at operating in your world, and project management that keeps your work organized across sessions.
 
 ## How it works
 
@@ -10,51 +10,58 @@ WorkOS gives Claude two kinds of memory that persist across sessions:
 
 **Project memory** — your ongoing projects in the environment.
 
-Both memory layer always captures the current understanding of your environment and your projects.
+Every Claude session has the latest understanding of all your projects and the environment.
 
 ## Why
 
-- **Better context from the start.** Claude knows your repos, tools, and conventions without being told every session.
-- **Gets better over time.** Every project teaches Claude something about the environment. Knowledge compounds.
-- **Project continuity.** Pick up where you left off. Claude reads the project memory and knows the objective, status, and plan.
-- **Two-way feedback loop.** Environment discoveries during project work flow back to environment memory, making all future projects better.
+### Context that evolves
 
-## End-to-end flow
+```
+Day 1:
+  You: "help me set up my workspace"
+  You: "I work on the payments service, here's the repo"
+  Claude explores — learns the tech stack, build system, conventions, patterns.
 
-**First time — bootstrap your environment:**
-```
-You: "let's set up workos"
-  → Claude creates .workos/ structure
-  → Asks about your repos, team, tools
-  → Creates config.yaml
-  → Explores your repos and populates environment memory
-```
+Day 1:
+  You: "start a project to fix the token refresh bug"
+  Claude sets up the project. Creates a plan, you approve it, work begins.
 
-**Starting a project:**
-```
-You: "start a project for migrating the auth system"
-  → Claude creates .workos/projects/auth-migration/
-  → Fills in memory.md with the objective
-  → Creates empty plan.md
-  → Ready to work
-```
+Day 2:
+  You: "let's keep going on the token refresh fix"
+  Claude picks up exactly where you left off — objective, plan, progress, learnings.
 
-**Working on a project:**
-```
-You: "let's work on auth migration"
-  → Claude reads project memory + plan → knows where you left off
-  → Does the work
-  → Updates project memory with new understanding
-  → Discovers a build quirk → promotes it to environment memory
+Day 5:
+  While fixing a bug, Claude discovers the DB migration tool has a quirk.
+  It remembers that for next time.
+
+Day 10:
+  You: "start a project to redesign the payments API"
+  New project, but Claude carries forward everything it learned.
+  You never re-explain. Every project makes it smarter.
 ```
 
-**Next session — everything is there:**
+### Project management
+
 ```
-Session starts
-  → Hook injects environment config + memory
-  → Hook lists all projects with status
-  → Claude already knows your world and your projects
-  → You just say what you want to do
+You: "start a project for the API redesign"
+  Claude creates the project — objective, plan, workspace. Ready to go.
+
+You: "what am I working on?"
+  Claude shows all your active projects — objective, status, current plan.
+
+You: "let's work on the API redesign"
+  Claude loads the full project context. Knows the plan, what's done, what's next.
+
+You: "this approach won't work, let's pivot to GraphQL"
+  Claude updates the plan, revises the project memory. Next session reflects the pivot.
+
+You: "the API redesign is done, archive it"
+  Claude promotes key learnings to environment memory and archives the project.
+  What you learned carries forward. The project is cleanly closed.
+
+Next session:
+  Claude already knows all your projects and their status.
+  No loading, no context-setting. You just say what you want to do.
 ```
 
 ## Setup
