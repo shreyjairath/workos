@@ -1,5 +1,5 @@
 {
-  "name": "pa",
-  "description": "Personal assistant with persistent memory of your life — people, goals, work, and context. Creates plans, gets your review, then executes autonomously with smart judgment on when to pause.",
-  "version": "1.0.0"
+  "name": "workos",
+  "description": "Persistent memory system for Claude Code. Two memory layers — environment and project — that accumulate knowledge across sessions.",
+  "version": "3.1.0"
 }
